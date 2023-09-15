@@ -1,4 +1,5 @@
-from loader import dp
+from loader import dp, log_id
+from error_dispatch import notify
 from aiogram.types import Message, InputFile, ContentTypes, ParseMode
 from aiogram.dispatcher import FSMContext
 from view.keyboards.standart import kb_yesterday
@@ -37,13 +38,14 @@ async def date_catch(message: Message, state: FSMContext):
                 checking_file_deletion = True
         await dp.bot.send_photo(chat_id=message.chat.id, photo=photo, caption=text,
                                 reply_markup=kb_daily_report(date_obj), parse_mode=ParseMode.HTML)
-    except ValueError:
+    except ValueError as err:
         await message.answer(text='Ошибка ввода даты.\nНапишите дату в формате 2023-01-01',
                              reply_markup=kb_yesterday)
         await UserStats.user_date.set()
     except Exception as err:
         await message.answer(text=f'Возникла непредвиденная ошибка\n{err}',
                              reply_markup=kb_yesterday)
+        notify(log_id, f"Ошибка:\n{err}\ncommands=['result']\n{message}")
         await state.reset_data()
         await state.finish()
     else:
