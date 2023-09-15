@@ -1,4 +1,4 @@
-from loader import user_db, technical_db
+from loader import user_db, technical_db, report_db
 
 
 def get_name_user_data_to_str() -> str:
@@ -50,3 +50,15 @@ def updating_data_for_parsing(name_table: str, name_file: str, new_value: str):
         case 'delimiters': technical_db.update_delimiters({'simbol_delimiter': new_value, 'files_name': name_file})
         case 'datetime': technical_db.update_datetime({'simbol_datetime': new_value, 'files_name': name_file})
         case 'num_row': technical_db.update_numbers_start_row({'num_row': new_value, 'files_name': name_file})
+
+def record_pict_id_for_null(db_id: int, pict_id: str):
+    """
+    Запись статичных изображений в БД
+    """
+    report_db.add_reports({'id_repo': db_id, 'url_str': pict_id})
+
+def send_pict_id(db_id: int):
+    """
+    Возврат id статичного изображения из базы данных
+    """
+    return report_db.get_stat_reports(id_repo=db_id)[0]

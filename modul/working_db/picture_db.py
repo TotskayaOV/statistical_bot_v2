@@ -31,10 +31,10 @@ class Picture(DataBase):
                 self.remove_reports(id_repo=result_db[0])
 
 
-    # def update_reports(self, new_data: dict):
-    #     parameters = (new_data.get('date_point'), new_data.get('url_str'), new_data.get('id_repo'))
-    #     sql = f'''UPDATE delimiters SET date_point=? AND url_str=? WHERE id_repo=? '''
-    #     self.execute(sql, parameters, commit=True)
+    def get_stat_reports(self, **kwargs):
+        sql = f'''SELECT url_str FROM reports WHERE '''
+        sql, parameters = self.extract_kwargs(sql, kwargs)
+        return self.execute(sql, parameters, fetchone=True)
 
     def remove_reports(self, **kwargs):
         sql = f'''DELETE FROM reports WHERE '''

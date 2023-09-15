@@ -7,7 +7,10 @@ from config import name_tables, position_graps, name_string, name_us_string
 from datetime import datetime, timedelta
 
 
-def return_result_users_one_day(date_obj: str, user_id: str, new_pict=False):
+def return_result_users_one_day(date_obj: str, user_id: str, new_pict=False) -> (str, str):
+    """
+    Создает результирующую строку за один день и дашборд в зависимости от результатов и запроса.
+    """
     counting_for_marge_file = []
     general_string = ''
     users_string = '<b>Твои результаты:</b>\n'
@@ -25,31 +28,36 @@ def return_result_users_one_day(date_obj: str, user_id: str, new_pict=False):
             match elem:
                 case 'j_times':
                     cnt_values = conversion_standard_timestamp(result_tuple[0])
-                    user_values = conversion_standard_timestamp(result_tuple[2][0].get('values'))
+                    if len(result_tuple[2]) != 0:
+                        user_values = conversion_standard_timestamp(result_tuple[2][0].get('values'))
                 case 'j_sla':
                     cnt_values = f'{round(result_tuple[0], 1)}%'
-                    user_values = f'{round(result_tuple[2][0].get("values"), 1)}%'
+                    if len(result_tuple[2]) != 0:
+                        user_values = f'{round(result_tuple[2][0].get("values"), 1)}%'
                 case _:
                     cnt_values = str(result_tuple[0])
-                    user_values = str(result_tuple[2][0].get("values"))
+                    if len(result_tuple[2]) != 0:
+                        user_values = str(result_tuple[2][0].get("values"))
             general_string = general_string + name_string.get(elem) + ': ' + cnt_values + '\n'
-            users_string = users_string  + name_us_string.get(elem) + ' - ' + user_values + '\n'
+            if len(result_tuple[2]) != 0:
+                users_string = users_string  + name_us_string.get(elem) + ' - ' + user_values + '\n'
         else: counting_for_marge_file.append(0)
-    # counting_for_marge_file.insert(4, 0)
     if new_pict:
         save_one_image(counting_for_marge_file, user_id)
+    if general_string == '':
+        return False
     return (general_string + users_string)
-    # counting_for_marge_file.append(horizontal_bar(date_obj))
-    # counting_for_marge_file.append(general_pie_graf(date_obj))
-    # done_image = save_one_image(counting_for_marge_file, date_obj)
 
-def return_result_users_period(date_obj: str, user_id: str, new_pict=False):
+
+def return_result_users_period(date_obj: str, user_id: str, new_pict=False) -> (str, str):
+    """
+    Создает результирующую строку за период и дашборд в зависимости от результатов и запроса.
+    """
     date_obj_on = datetime.strptime(date_obj, '%Y-%m-%d')
     date_in = str((date_obj_on - timedelta(days=7)).date())
     counting_for_marge_file = []
     general_string = '<b>Результаты отдела:</b>\n'
     users_string = '\n<b>Твои результаты:</b>\n'
-    # counting_for_marge_file.append(general_pie_graf(date_obj))
     method_dict ={'general_portal': created_bar, 'j_counts': created_bar,
                   'j_times': created_bar, 'j_sla': created_bar, 'calls': created_bar}
     for elem in name_tables:
@@ -77,7 +85,8 @@ def return_result_users_period(date_obj: str, user_id: str, new_pict=False):
                 general_string = general_string + days_elem.get('date') + ': ' + cnt_values + '\n'
                 users_string = users_string  + days_elem.get('date') + ': ' + user_values + '\n'
         else: counting_for_marge_file.append(0)
-    # counting_for_marge_file.insert(4, 0)
     if new_pict:
         save_one_image(counting_for_marge_file, user_id)
+    if general_string == '<b>Результаты отдела:</b>\n':
+        return False
     return (general_string + users_string)

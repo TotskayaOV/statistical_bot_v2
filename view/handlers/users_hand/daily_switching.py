@@ -5,7 +5,7 @@ from view.keyboards.inline import kb_daily_report
 from view.callback import date_return
 from controller import return_result_users_one_day, check_record_img, \
     return_result_users_period, check_one_period_report, check_record_period_img, check_one_day_report, \
-    deleting_temporary_files
+    deleting_temporary_files, send_pict_id
 from loader import bot
 
 @dp.callback_query_handler(date_return.filter(button='one_day'))
@@ -20,9 +20,15 @@ async def one_day_report_users(call: CallbackQuery):
         photo = check_one_day_report(date_obj, user_id)
         if photo:
             text = return_result_users_one_day(date_obj, user_id)
+            if text is False:
+                text = 'Нет данных за выбранную дату'
         else:
             text = return_result_users_one_day(date_obj, user_id, new_pict=True)
-            photo = InputFile(f"./cred/merged_images-{user_id}.png")
+            if text is False:
+                text ='Нет данных за выбранную дату'
+                photo = send_pict_id(1)
+            else:
+                photo = InputFile(f"./cred/merged_images-{user_id}.png")
         await bot.edit_message_media(media=InputMediaPhoto(media=photo, caption=text, parse_mode=ParseMode.HTML),
                                      chat_id=user_id, message_id=current_msg, reply_markup=kb_daily_report(date_obj))
     except Exception as err:
@@ -45,9 +51,15 @@ async def period_report_users(call: CallbackQuery):
         photo = check_one_period_report(date_obj, user_id)
         if photo:
             text = return_result_users_period(date_obj, user_id)
+            if text is False:
+                text = 'Нет данных за выбранную дату'
         else:
-            text = return_result_users_period(date_obj,user_id,new_pict=True)
-            photo = InputFile(f"./cred/merged_images-{user_id}.png")
+            text = return_result_users_period(date_obj, user_id, new_pict=True)
+            if text is False:
+                text = 'Нет данных за выбранную дату'
+                photo = send_pict_id(1)
+            else:
+                photo = InputFile(f"./cred/merged_images-{user_id}.png")
         await bot.edit_message_media(media=InputMediaPhoto(
                 media=photo, caption=text, parse_mode=ParseMode.HTML),
                 chat_id=user_id, message_id=current_msg,

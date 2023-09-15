@@ -12,6 +12,7 @@ from .download_db import dp
 from .new_delimiters import dp
 from .new_datetime import dp
 from .new_num_row import dp
+from .pict_catch import dp
 
 
 __all__ = ['dp']

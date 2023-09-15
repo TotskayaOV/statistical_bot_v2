@@ -3,7 +3,7 @@ from aiogram.types import Message, InputFile, ContentTypes, ParseMode
 from aiogram.dispatcher import FSMContext
 from view.keyboards.standart import kb_yesterday
 from view.keyboards.inline import kb_daily_report
-from controller import return_result_users_one_day, deleting_temporary_files, check_one_day_report
+from controller import return_result_users_one_day, deleting_temporary_files, check_one_day_report, send_pict_id
 from view.states import UserStats
 
 
@@ -23,11 +23,18 @@ async def date_catch(message: Message, state: FSMContext):
         photo = check_one_day_report(date_obj, user_id)
         if photo:
             text = return_result_users_one_day(date_obj, user_id)
+            if text is False:
+                text = 'Нет данных за выбранную дату'
             checking_file_deletion = False
         else:
             text = return_result_users_one_day(date_obj, user_id, new_pict=True)
-            photo = InputFile(f"./cred/merged_images-{user_id}.png")
-            checking_file_deletion = True
+            if text is False:
+                text = 'Нет данных за выбранную дату'
+                photo = send_pict_id(1)
+                checking_file_deletion = False
+            else:
+                photo = InputFile(f"./cred/merged_images-{user_id}.png")
+                checking_file_deletion = True
         await dp.bot.send_photo(chat_id=message.chat.id, photo=photo, caption=text,
                                 reply_markup=kb_daily_report(date_obj), parse_mode=ParseMode.HTML)
     except ValueError:

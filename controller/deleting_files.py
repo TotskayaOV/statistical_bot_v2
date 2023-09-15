@@ -17,6 +17,8 @@ def deleting_temporary_files(user_id):
         os.remove(f'./cred/j_sla-{user_id}.jpg')
     if os.path.isfile(f'./cred/j_times-{user_id}.jpg'):
         os.remove(f'./cred/j_times-{user_id}.jpg')
+    if os.path.isfile(f'./cred/general_portal-{user_id}.jpg'):
+        os.remove(f'./cred/general_portal-{user_id}.jpg')
 
 
 def deleted_data_for_date(obj_data: str, date_data: str):

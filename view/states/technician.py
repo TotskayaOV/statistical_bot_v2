@@ -62,3 +62,6 @@ class NewDetetime(StatesGroup):
 class NewNumStr(StatesGroup):
     name_file = State()
     new_value = State()
+
+class PictCatch(StatesGroup):
+    user_pict = State()

@@ -12,6 +12,7 @@ from modul import DataBase, User, Call, Technical, Jira, Portal, Picture
 memory = MemoryStorage()
 
 bot = Bot(os.getenv('TOKEN'))
+log_id = os.getenv('LOG_ID')
 dp = Dispatcher(bot, storage=memory)
 db = DataBase()
 
@@ -21,8 +22,7 @@ jira_db = Jira()
 technical_db = Technical()
 portal_db = Portal()
 report_db = Picture()
-# # log_id = os.getenv('LOG_ID')
-# admin_id = os.getenv('ADMIN_ID')
+
 
 
 
